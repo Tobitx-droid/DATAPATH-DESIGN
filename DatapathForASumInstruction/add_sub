@@ -1,0 +1,79 @@
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    21:24:52 07/04/2021 
+-- Design Name: 
+-- Module Name:    add_sub - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
+--
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx primitives in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity add_sub is
+	port(
+		A, B : in std_logic_vector(3 downto 0);
+		sub  : in std_logic;
+		c_out: out std_logic;
+		   Y : out std_logic_vector(3 downto 0)
+	);
+end add_sub;
+
+architecture Behavioral of add_sub is
+	component mux2 
+		port(
+			a,b : in std_logic_vector(3 downto 0);
+			sel : in std_logic;
+			Y   : out std_logic_vector(3 downto 0)
+		);
+	end component;
+	
+	component fourBitFullAdder 
+		port(
+				C0 : in std_logic;
+			  A,B : in std_logic_vector(3 downto 0); 
+				 S : out std_logic_vector(3 downto 0);
+			C_out : out std_logic		 
+		);
+	end component;
+	signal notB   : std_logic_vector(3 downto 0);
+	signal muxOut : std_logic_vector(3 downto 0);
+	
+begin
+	notB <= not B;
+	mux : mux2 port map(
+		A   => B,
+		B   => notB,
+		sel => sub,
+		Y   => muxOut
+	);
+	
+	adder : fourBitFullAdder port map(
+		C0 => sub,
+	   A  => A,
+		B  => muxOut,
+	   S  => Y, 
+   C_out => c_out	 
+	);
+		
+
+
+end Behavioral;
