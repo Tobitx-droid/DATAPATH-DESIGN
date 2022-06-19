@@ -1,0 +1,56 @@
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    23:53:52 07/04/2021 
+-- Design Name: 
+-- Module Name:    reg - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
+--
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx primitives in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity reg is
+	port(
+		clk,load,clr : in std_logic;
+		           D : in std_logic_vector(3 downto 0);
+					  Q : out std_logic_vector(3 downto 0)
+	);
+end reg;
+
+architecture Behavioral of reg is
+
+begin
+	reg : process(Clk)
+				begin
+					if(rising_edge(clk)) then
+						if(load = '1') then
+							q <= d;
+							if(clr = '1') then
+								q <= "0000";
+							end if;
+						end if;
+					end if;
+			end process;
+	
+
+
+end Behavioral;
