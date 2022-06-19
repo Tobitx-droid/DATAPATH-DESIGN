@@ -1,0 +1,147 @@
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    23:11:23 07/04/2021 
+-- Design Name: 
+-- Module Name:    datapath - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
+--
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx primitives in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity datapath is
+	port(
+		                 Input : in std_logic_vector(3 downto 0);
+		muxSel1, muxSel2, nload, sumLoad : in std_logic;
+		  outSum,sub,clk,sumClear, nClear : in std_logic;
+		          status, c_out: out std_logic;
+						 output    : out std_logic_vector(3 downto 0)
+		          
+	);
+end datapath;
+
+architecture Behavioral of datapath is
+	component mux 
+		port(
+			A,B : in std_logic_vector(3 downto 0);
+			sel : in std_logic;
+			Y   : out std_logic_vector(3 downto 0)
+		);
+	end component;
+	
+	component reg 
+		port(
+			clk,load,clr : in std_logic;
+						  D : in std_logic_vector(3 downto 0);
+						  Q : out std_logic_vector(3 downto 0)
+		);
+	end component;
+	
+	component comparator 
+		port(
+			Q : in std_logic_vector(3 downto 0);
+			Y : out std_logic
+		);
+	end component;
+	
+	component add_sub
+	port(
+		A, B : in std_logic_vector(3 downto 0);
+		sub  : in std_logic;
+		c_out: out std_logic;
+		   Y : out std_logic_vector(3 downto 0)
+	);
+	end component;
+	
+	component tristate 
+		port(
+			Q : in std_logic_vector(3 downto 0);
+			Y : out std_logic_vector(3 downto 0);
+	 outSum : in std_logic
+		);
+	end component;
+	
+	signal addSumOut : std_logic_vector(3 downto 0);
+	signal mux1out: std_logic_vector(3 downto 0);
+	signal mux2out: std_logic_vector(3 downto 0);
+	signal reg1out: std_logic_vector(3 downto 0);
+	signal reg2out: std_logic_vector(3 downto 0);
+	
+ 
+
+
+	
+begin
+	
+	mux1 : mux port map (
+				A => Input,
+				B => addSumOut,
+			 sel => muxSel1,
+		   	Y => mux1out
+		);
+		
+	reg1 :  reg port map (
+			clk  => clk, 
+			load => sumload,
+			clr  => sumClear,
+			D    => mux1out,
+			Q    => reg1out
+		);
+		
+	reg2 : reg port map (
+			clk  => clk, 
+			load => nload,
+			clr  => nClear,
+			D    => addSumOut,
+			Q    => reg2out
+		);
+		
+statOut :  comparator port map(
+			Q => reg1out,
+			Y => status
+		);
+
+	mux2:   mux port map (
+				A => reg1out,
+				B => "0001",
+			 sel => muxSel2,
+		   	Y => mux2out
+		);
+		
+	addSum: add_sub port map(
+	
+				A    => 	reg2out,
+				B    =>  mux2out,
+				sub  =>  sub,
+			c_out   =>  c_out,
+				  Y  =>	addSumOut
+	);
+	
+	OutBuffer : tristate port map(
+	
+						Q => reg1out,
+						Y => output,
+				 outSum => outSum
+			);
+
+
+end Behavioral;
