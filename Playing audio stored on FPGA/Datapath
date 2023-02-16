@@ -1,0 +1,112 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 02/06/2023 10:57:30 AM
+-- Design Name: 
+-- Module Name: rawAudioDatapath - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity rawAudioDatapath is
+    Port (
+        clk,rst,rst1,rst2,count,replay,shiftLoad     : in std_logic;
+        pwm,playback,empty                           : out std_logic
+     );
+end rawAudioDatapath;
+
+architecture Behavioral of rawAudioDatapath is
+
+    ---------------component declaration------------
+    component audioClk is
+        Port (
+            clk,rst   : in std_logic;
+            outClk       : out std_logic
+         );
+    end component;
+    
+    component tryAddGen is
+        Port (
+          clk,count,replay,rst1     : in std_logic;
+          outCount          : out std_logic_vector(6 downto 0);
+          playback,empty : out std_logic
+
+         );
+    end component;
+    
+    component ROM is
+        Port (
+            address : in std_logic_vector(6 downto 0);
+            data_out: out std_logic_vector(7 downto 0)
+         );
+    end component;
+    
+    component PISO8bits is
+        Port (
+                dataIn          : in std_logic_vector(7 downto 0);
+                shiftLoad, clk,rst2  : in std_logic;
+                serialOut       : out std_logic
+             );
+    end component;
+    
+    ----------signal declaration-----------
+    signal toAddgen     : std_logic; 
+    signal toROM        : std_logic_vector(6 downto 0);
+    signal toSerializer : std_logic_vector(7 downto 0);
+
+begin
+
+    ---------port mapping---------
+    clkDiv : audioClk port map(
+                clk    => clk,
+                rst    => rst,
+                outClk => toAddgen
+             );
+             
+    addgen : tryAddGen port map(
+                rst1      => rst1,
+                clk       => toAddgen,
+                count     => count,
+                empty     => empty,
+                replay    => replay,
+                playback  => playback,
+                outCount  => toROM
+             );                    
+    
+    Memory : ROM port map(
+                 address  => toROM,
+                 data_out => toSerializer
+             );
+             
+    serializer : PISO8bits port map(
+                    rst2       => rst2,
+                    dataIn     => toSerializer,     
+                    shiftLoad  => shiftLoad,
+                    clk        => toAddgen,
+                    serialOut  => pwm
+                 );   
+
+end Behavioral;
