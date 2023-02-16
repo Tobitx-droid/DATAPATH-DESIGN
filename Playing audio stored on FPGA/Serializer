@@ -1,0 +1,339 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 01/31/2023 02:29:20 PM
+-- Design Name: 
+-- Module Name: PISO8bits - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity PISO8bits is
+    Port (
+            dataIn               : in std_logic_vector(7 downto 0);
+            shiftLoad, clk,rst2  : in std_logic;
+            serialOut            : out std_logic
+         );
+end PISO8bits;
+
+architecture Behavioral of PISO8bits is
+
+-------component declaration-----------
+    component Reg1bit is
+        Port (
+            d,clk,rst   : in std_logic;
+            q           : out std_logic
+         );
+    end component;
+    
+    component not1bit is
+        Port (
+            A        : in std_logic;
+            Y        : out std_logic
+         );
+    end component;
+    
+    component and1bit is
+        Port (
+            A,B      : in std_logic;
+            Y        : out std_logic
+         );
+    end component;
+    
+    component or1bit is
+        Port (
+            A,B     : in std_logic;
+            Y       : out std_logic
+         );
+    end component;
+-----------------------------------------
+----------signal declaration------------
+    signal notSig, toAnd1,  toOr1A, toOr1B : std_logic;
+    signal toRegIn1, toAnd2, toOr2A, toOr2B, toRegIn2 : std_logic;
+    signal toAnd3, toOr3A, toOr3B, toRegIn3, notclk : std_logic;
+    signal toRegIn4,toRegIn5,toRegIn6,toRegIn7 : std_logic;
+    signal toAnd4,toAnd5,toAnd6,toAnd7 : std_logic;
+    signal toOr4A,toOr4B,toOr5A,toOr5B,toOr6A,toOr6B,toOr7A,toOr7B: std_logic;
+    -------------------------------------
+    
+begin
+    notclk <=  clk; --I removed the not so it's just a clock but i don't want to change the variable hence the name persists
+---------port mapping--------------
+    notgate: not1bit port map(
+                A => shiftLoad,                   
+                Y => notSig
+             );    
+    
+    reg0   : Reg1bit port map(
+                rst  => rst2,
+                d    => dataIn(0),
+                clk  => notclk,
+                q    => toAnd1                         
+             );
+             
+    and1   : and1bit port map(
+                A => toAnd1,
+                B => shiftLoad,
+                Y => toOr1A
+             );
+             
+    and2   : and1bit port map(
+                A => notSig,
+                B => dataIn(1),
+                Y => toOr1B
+             );
+    
+    or1    : or1bit port map(
+                A => toOr1A,
+                B => toOr1B,
+                Y => toRegIn1 
+             );
+             
+    reg1   : Reg1bit port map(
+                rst  => rst2,
+                d    => toRegIn1,
+                clk  => notclk,
+                q    => toAnd2                       
+             );
+    
+    and3   : and1bit port map(
+                A => toAnd2,
+                B => shiftLoad,
+                Y => toOr2A
+             );
+             
+    and4   : and1bit port map(
+                A => notSig,
+                B => dataIn(2),
+                Y => toOr2B
+             );
+        
+    or2   : or1bit port map(
+                A => toOr2A,
+                B => toOr2B,
+                Y => toRegIn2 
+             );
+             
+    reg2   : Reg1bit port map(
+                rst  => rst2, 
+                d    => toRegIn2,
+                clk  => notclk,
+                q    => toAnd3                       
+             );
+    
+    and5   : and1bit port map(
+                A => toAnd3,
+                B => shiftLoad,
+                Y => toOr3A
+             );
+    
+    and6   : and1bit port map(
+                 A => notSig,
+                 B => dataIn(3),
+                 Y => toOr3B
+              );
+     
+    or3   : or1bit port map(
+                 A => toOr3A,
+                 B => toOr3B,
+                 Y => toRegIn3 
+              );
+              
+    reg3   : Reg1bit port map(
+                rst  => rst2,
+                d    => toRegIn3,
+                clk  => notclk,
+                q    => toAnd4                       
+             );
+    
+    and7   :  and1bit port map(
+                  A => toAnd4,
+                  B => shiftLoad,
+                  Y => toOr4A
+               ); 
+           
+    and8    : and1bit port map(
+                  A => notSig,
+                  B => dataIn(4),
+                  Y => toOr4B
+               );
+             
+    or4   : or1bit port map(
+                A => toOr4A,
+                B => toOr4B,
+                Y => toRegIn4 
+             ); 
+             
+    reg4   : Reg1bit port map(
+                rst  => rst2,
+                d    => toRegIn4,
+                clk  => notclk,
+                q    => toAnd5                       
+             ); 
+             
+    and9   :  and1bit port map(
+                A => toAnd5,
+                B => shiftLoad,
+                Y => toOr5A
+             );
+    
+    and10    : and1bit port map(
+                A => notSig,
+                B => dataIn(5),
+                Y => toOr5B
+             );
+    
+    or5   : or1bit port map(
+                A => toOr5A,
+                B => toOr5B,
+                Y => toRegIn5 
+             );
+    
+    reg5   : Reg1bit port map(
+                rst  => rst2,
+                d    => toRegIn5,
+                clk  => notclk,
+                q    => toAnd6                       
+             ); 
+    
+    and11   :  and1bit port map(
+                A => toAnd6,
+                B => shiftLoad,
+                Y => toOr6A
+             );
+    
+    and12    : and1bit port map(
+                A => notSig,
+                B => dataIn(6),
+                Y => toOr6B
+             );
+             
+    or6   : or1bit port map(
+                A => toOr6A,
+                B => toOr6B,
+                Y => toRegIn6 
+             );
+             
+    reg6   : Reg1bit port map(
+                rst  => rst2,
+                d    => toRegIn6,
+                clk  => notclk,
+                q    => toAnd7                       
+             );
+             
+    and13   :  and1bit port map(
+                A => toAnd7,
+                B => shiftLoad,
+                Y => toOr7A
+             ); 
+                     
+    and14    : and1bit port map(
+                A => notSig,
+                B => dataIn(7),
+                Y => toOr7B
+             );        
+             
+    or7   : or1bit port map(
+                A => toOr7A,
+                B => toOr7B,
+                Y => toRegIn7 
+             );    
+             
+    reg7   : Reg1bit port map(
+                rst  => rst2,
+                d    => toRegIn6,
+                clk  => notclk,
+                q    => serialOut                       
+             );        
+             
+             
+  
+  
+                   
+    
+    
+
+end Behavioral;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
