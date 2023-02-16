@@ -1,0 +1,174 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 02/07/2023 08:40:56 AM
+-- Design Name: 
+-- Module Name: FSM - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity FSM is
+    Port (
+        rst,clk,playback,empty : in std_logic;
+        rst1,rst2,count,shiftLoad : out std_logic
+     );
+end FSM;
+
+architecture Behavioral of FSM is
+
+----------states-----------------
+    type states is (ST0,ST1,ST2,ST3,ST4,ST5,ST6,ST7,ST8,ST9,ST10,ST11);
+    signal PS, NS: states;
+
+begin
+    ns_ps: process(clk,rst)  
+            begin
+                if(rst = '1') then
+                    PS <= ST0;
+                elsif(rising_edge(clk)) then
+                    PS <= NS;
+                end if;
+           end process;
+           
+    ns_compute: process(PS,playback,empty) --This process creates a link between the current state, next state and condition
+                    begin
+                        case(PS) is
+                            when ST0 =>
+                                NS <= ST1;
+                            when ST1 =>
+                                NS <= ST2;
+                            when ST2 =>
+                                NS <= ST3;
+                            when ST3 =>
+                                NS <= ST4;
+                            when ST4 =>
+                                NS <= ST5;
+                            when ST5 =>
+                                NS <= ST6;
+                            when ST6 =>
+                                NS <= ST7;
+                            when ST7 =>
+                                NS <= ST8;
+                            when ST8 =>
+                                NS <= ST9;
+                            when ST9 => 
+                                NS <= ST10;
+                            when ST10 =>
+                                if(empty = '1') then
+                                    NS <= ST11;
+                                else
+                                    NS <= ST1;
+                                end if;
+                            when ST11 =>
+                                if(playback = '1')then
+                                    NS <= ST0;
+                                else
+                                    NS <= ST11;
+                                end if;
+                        end case;     
+                end process;
+
+    output_logic: process(PS) is
+                    begin
+                        case(PS) is
+                            when ST0 =>
+                                rst1      <= '1';
+                                rst2      <= '1';
+                                shiftLoad <= '0';
+                                count     <= '0';
+                                
+                            when ST1 =>
+                                rst1      <= '0'; 
+                                rst2      <= '1';
+                                shiftLoad <= '0';
+                                count     <= '1';
+                                
+                            when ST2 => --for loading the PISO registers
+                                rst1      <= '0';
+                                rst2      <= '0';
+                                shiftLoad <= '0';
+                                count     <= '0';
+                                
+                            when ST3 => --1/8 shift
+                                rst1      <= '0';
+                                rst2      <= '0';
+                                shiftLoad <= '1';
+                                count     <= '0';
+                                
+                            when ST4 => --2/8 shift
+                                rst1      <= '0';
+                                rst2      <= '0';
+                                shiftLoad <= '1';
+                                count     <= '0';
+                                
+                            when ST5 => --3/8 shift
+                                rst1      <= '0';
+                                rst2      <= '0';
+                                shiftLoad <= '1';
+                                count     <= '0';
+                                
+                            when ST6 => --4/8 shift
+                                rst1      <= '0';
+                                rst2      <= '0';
+                                shiftLoad <= '1';
+                                count     <= '0';
+                                
+                            when ST7 => --5/8 shift
+                                rst1      <= '0';
+                                rst2      <= '0';
+                                shiftLoad <= '1';
+                                count     <= '0';
+                                
+                            when ST8 => --6/8 shift
+                                rst1      <= '0';
+                                rst2      <= '0';
+                                shiftLoad <= '1';
+                                count     <= '0';
+                                
+                            when ST9 => --7/8 shift
+                                rst1      <= '0';
+                                rst2      <= '0';
+                                shiftLoad <= '1';
+                                count     <= '0';
+                                
+                            when ST10 => --8/8 shift
+                                rst1      <= '0';
+                                rst2      <= '0';
+                                shiftLoad <= '1';
+                                count     <= '0';
+                                
+                            when ST11 => --hold state
+                                rst1      <= '0';
+                                rst2      <= '0';
+                                shiftLoad <= 'Z';
+                                count     <= '0';
+                                
+                        end case;        
+                  end process;              
+                                
+                                
+end Behavioral;
