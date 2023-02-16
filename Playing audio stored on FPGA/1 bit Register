@@ -1,0 +1,62 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 01/26/2023 08:40:04 PM
+-- Design Name: 
+-- Module Name: Serializer - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity Reg1bit is
+    Port (
+        d,clk,rst       : in std_logic;
+        q           : out std_logic
+     );
+end Reg1bit;
+
+architecture Behavioral of Reg1bit is
+
+-----signal declaration--------------
+    signal temp: std_logic := '0';
+    
+begin
+    process(clk,rst) is
+        begin
+            if(rst = '1')then
+                temp <= '0';
+            elsif(rising_edge(clk))then
+                temp <= d;
+            end if;
+    end process;    
+       
+    q <= temp; 
+          
+        
+        
+        
+        
+end Behavioral;
