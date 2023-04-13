@@ -264,7 +264,7 @@ begin
              
     reg7   : Reg1bit port map(
                 rst  => rst2,
-                d    => toRegIn6,
+                d    => toRegIn7,
                 clk  => notclk,
                 q    => serialOut                       
              );        
