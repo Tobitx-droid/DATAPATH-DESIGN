@@ -62,7 +62,8 @@ architecture Behavioral of AudioProcuP is
     
 ------signals for clock divider---------------
     signal clktemp: std_logic_vector(5 downto 0);
-    signal newclksig,finalclk : std_logic;
+    --signal newclksig : std_logic;
+    signal finalclk : std_logic;
    
     
     
