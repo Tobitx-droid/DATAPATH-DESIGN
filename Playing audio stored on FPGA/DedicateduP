@@ -61,7 +61,7 @@ architecture Behavioral of AudioProcuP is
     signal toplayback, toempty,tocount,toshiftLoad,torst1,torst2: std_logic;
     
 ------signals for clock divider---------------
-    signal clktemp: std_logic_vector(6 downto 0);
+    signal clktemp: std_logic_vector(5 downto 0);
     signal newclksig,finalclk : std_logic;
    
     
@@ -73,19 +73,19 @@ begin
 
 -------stepping down FPGA clk to audible frequency of 187Hz----------
 clkProcess: process(clk,rst) is
-                    variable audibleClk: std_logic;
+                    --variable audibleClk: std_logic;
                     begin
                         if(rst = '1') then
                             clktemp <= (others => '0');
                         elsif(rising_edge(clk)) then
                             clktemp <=  clktemp + 1;
-                            newclksig <= clktemp(6);
+                            --newclksig <= clktemp(5);
                         end if;
                         
-                        audibleClk := newclksig;
-                        finalclk <= audibleClk;
+                        --audibleClk := newclksig;
+                        
                 end process;
-     
+     finalclk <= clktemp(5);
     
 
 ---------port mapping------------------------
