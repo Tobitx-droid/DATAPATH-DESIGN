@@ -1,0 +1,71 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 05/03/2023 11:56:26 AM
+-- Design Name: 
+-- Module Name: memMux - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity memMux is
+    Port (
+        sel : in std_logic_vector(3 downto 0);
+        --in0,in1,in2,in3,in4,in5,in6,in7,in8,in9,in10,in11,in12,in13,in14,in15: in std_logic_vector(15 downto 0);
+        dataIn : in std_logic_vector(255 downto 0);
+        dataOut : out std_logic_vector(15 downto 0)
+     );
+end memMux;
+
+architecture Behavioral of memMux is
+
+begin                                   
+    dataOut <= dataIn(15 downto 0) when (sel = "1111") else
+                                        
+               dataIn(31 downto 16) when (sel = "1110") else
+                                         
+               dataIn(47 downto 32) when (sel = "1101") else
+                                         
+               dataIn(63 downto 48) when (sel = "1100") else
+                                         
+               dataIn(79 downto 64) when (sel = "1011") else
+                                         
+               dataIn(95 downto 80) when (sel = "1010") else
+               dataIn(111 downto 96) when (sel = "1001") else
+               dataIn(127 downto 112) when (sel = "1000") else
+               dataIn(143 downto 128) when (sel = "0111") else
+                                            
+               dataIn(159 downto 144) when (sel = "0110") else
+               dataIn(175 downto 160) when (sel = "0101") else
+               dataIn(191 downto 176) when (sel = "0100") else
+               dataIn(207 downto 192) when (sel = "0011") else
+               dataIn(223 downto 208) when (sel = "0010") else
+               dataIn(239 downto 224) when (sel = "0001") else
+               dataIn(255 downto 240) when (sel = "0000") else
+               (others => '0');
+               
+
+end Behavioral;
