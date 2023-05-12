@@ -1,1 +1,78 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 02/08/2023 07:35:59 PM
+-- Design Name: 
+-- Module Name: tryAddGen - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
 
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use ieee.std_logic_unsigned.all;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity tryAddGen is
+    Port (
+            clk,count,replay,rst1     : in std_logic;
+            outCount          : out std_logic_vector(6 downto 0);
+            playback,empty    : out std_logic
+            
+           );
+end tryAddGen;
+
+architecture Behavioral of tryAddGen is
+
+begin
+    addprocess : process(clk) is
+                    
+                    variable i : std_logic_vector(6 downto 0);
+                    variable emptyVar,playbackVar : std_logic;
+                    begin
+                        if(rst1 = '1') then
+                            i:= (others => '0');
+                        elsif(rising_edge(clk)) then
+                            if(count = '1') then
+                                i := i + 1;
+                                outCount <= i;
+                           
+                                if(i = "1010000") then
+                                    emptyVar := '1';
+                                    empty <= emptyVar;
+                                    if(emptyVar = '1') then
+                                        if(replay = '1')then
+                                            playbackVar := '1';
+                                            playback <= playbackVar;    
+                                        else
+                                            playbackVar := '0';
+                                            playback <= playbackVar;
+                                        end if;
+                                     end if;
+                            end if;
+                        end if;
+                        end if;
+                 end process;       
+                 
+                        
+
+end Behavioral;
