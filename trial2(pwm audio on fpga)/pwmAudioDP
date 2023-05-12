@@ -1,0 +1,142 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 04/21/2023 10:51:43 AM
+-- Design Name: 
+-- Module Name: pwmAudioDP - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity pwmAudioDP is
+    Port (
+       clk,rst : in std_logic;
+       pwmOut  : out std_logic 
+     );
+end pwmAudioDP;
+
+architecture Behavioral of pwmAudioDP is
+
+------component declaration---------------
+
+component audioClk is
+    Port (
+        clk,rst   : in std_logic;
+        outClk       : out std_logic
+     );
+end component;
+    
+component addGen is
+    Port (
+        clk,rst : in std_logic;
+        address : out std_logic_vector(19 downto 0)
+     );
+end component;   
+
+component dist_mem_gen_0 is 
+    port(
+        a  : in std_logic_vector(15 downto 0);
+        spo: out std_logic_vector(255 downto 0)
+        );
+end component;
+
+component memMux is
+    port(
+        sel : in std_logic_vector(3 downto 0);
+     dataIn : in std_logic_vector(255 downto 0);
+     dataOut : out std_logic_vector(15 downto 0)
+     );
+end component;
+
+--component ROM is
+--    Port (
+--        address : in std_logic_vector(5 downto 0);
+--        data_out: out std_logic_vector(15 downto 0)
+--     );
+--end component;
+
+component pwmGen is
+    Port (
+        clk,rst: in std_logic;  --25MHz
+        data   : in std_logic_vector(15 downto 0);
+        pwmOut : out std_logic
+        
+     );
+end component;
+
+
+-------signal declaration------------
+signal clkDivOut: std_logic;
+signal toROM   : std_logic_vector(19 downto 0);
+signal toPwmGen: std_logic_vector(15 downto 0);
+signal toMemMux : std_logic_vector(255 downto 0);
+
+begin
+
+ ---------port mapping---------
+    clkDiv : audioClk port map(
+                clk    => clk,
+                rst    => rst,
+                outClk => clkDivOut
+             );
+
+addressGenerator : addGen port map(
+                       clk      => clkDivOut,  
+                       rst      => rst, 
+                       address  => toROM
+                   ); 
+   
+             
+        BMem : dist_mem_gen_0 port map(
+                   a   => toROM(19 downto 4),
+                   spo => toMemMux
+               ); 
+               
+    memoryMux : memMux port map(
+                    sel     => toROM(3 downto 0),
+                    dataIn  => toMemMux,
+                    dataOut => toPwmGen
+                );
+    --Memory : ROM port map(
+    --             address  => toROM,
+    --             data_out => toPwmGen
+    --         );
+
+pwmGenerator : pwmGen port map(
+                 rst    => rst,
+                 clk    => clkDivOut,
+                 data   => toPwmGen,
+                 pwmOut => pwmOut
+               );
+        
+    
+ 
+
+
+
+ 
+
+end Behavioral;
